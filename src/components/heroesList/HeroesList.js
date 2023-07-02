@@ -1,5 +1,5 @@
 import {useHttp} from '../../hooks/http.hook';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { heroesFetching, heroesFetched, heroesFetchingError } from '../../actions';
@@ -14,7 +14,27 @@ import Spinner from '../spinner/Spinner';
 const HeroesList = () => {
     const {heroes, heroesLoadingStatus} = useSelector(state => state);
     const dispatch = useDispatch();
-    const {request} = useHttp();
+
+    const {request, onDelete} = useHttp();
+
+    const [id, setId] = useState();
+
+    useEffect(() => {
+        const deleteHero = async () => {
+            if (id > 0) {
+                try {
+                    await onDelete(`http://localhost:3001/heroes/${id}`);
+                        dispatch(heroesFetching());
+                    const data = await request("http://localhost:3001/heroes");
+                        dispatch(heroesFetched(data));
+                } catch (error) {
+                        dispatch(heroesFetchingError());
+                }
+            }
+        }
+
+        deleteHero();
+    }, [id])
 
     useEffect(() => {
         dispatch(heroesFetching());
@@ -37,7 +57,7 @@ const HeroesList = () => {
         }
 
         return arr.map(({id, ...props}) => {
-            return <HeroesListItem key={id} {...props}/>
+            return <HeroesListItem setId={setId} id={id} key={id} {...props}/>
         })
     }
 

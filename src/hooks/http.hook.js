@@ -23,11 +23,25 @@ export const useHttp = () => {
         }
     }, []);
 
+    const onDelete = useCallback(async (url, method = 'DELETE') => {
+
+        try {
+            const response = await fetch(url, {method});
+
+            if (!response.ok) {
+                throw new Error(`Could not fetch ${url}, status: ${response.status}`);
+            }
+        } catch(e) {
+            throw e;
+        }
+    }, []);   
+
     // const clearError = useCallback(() => {
         // setProcess('loading');
     // }, []);
 
     return {request, 
+            onDelete
             // clearError, 
             // process, 
             // setProcess
