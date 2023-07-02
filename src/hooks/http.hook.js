@@ -23,6 +23,24 @@ export const useHttp = () => {
         }
     }, []);
 
+    const post = useCallback(async (url, data, method = 'POST', headers = {'Content-Type': 'application/json'}) => {
+
+        try {
+            const response = await fetch(url, {
+                method,
+                headers,
+                body: JSON.stringify(data)
+            });
+
+            if (!response.ok) {
+                throw new Error(`Could not fetch ${url}, status: ${response.status}`);
+            }
+
+        } catch(e) {
+            throw e;
+        }
+    }, []);
+
     const onDelete = useCallback(async (url, method = 'DELETE') => {
 
         try {
@@ -41,7 +59,8 @@ export const useHttp = () => {
     // }, []);
 
     return {request, 
-            onDelete
+            onDelete,
+            post
             // clearError, 
             // process, 
             // setProcess

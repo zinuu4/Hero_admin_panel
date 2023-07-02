@@ -1,4 +1,9 @@
+import {useHttp} from '../../hooks/http.hook';
+import { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { v4 as uuidv4 } from 'uuid';
 
+import { heroesFetching, heroesFetched, heroesFetchingError } from '../../actions';
 
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
@@ -11,8 +16,52 @@
 // данных из фильтров
 
 const HeroesAddForm = () => {
+    const {heroes} = useSelector(state => state);
+    const dispatch = useDispatch();
+
+    const {request, post} = useHttp();
+    const [elements, setElements] = useState([]);
+
+    const [name, setName] = useState('');
+    const [descr, setDescr] = useState('');
+    const [element, setElement] = useState('');
+
+    useEffect(() => {
+        request("http://localhost:3001/filters")
+            .then(data => setElements(data))
+            .catch((e) => console.log(e));
+    }, []);
+
+    const postHero = async (e) => {
+        e.preventDefault();
+        
+        const heroInf = {
+          "id": uuidv4(),
+          "name": name,
+          "description": descr,
+          "element": element
+        };
+      
+        try {
+          await post("http://localhost:3001/heroes", heroInf);
+            dispatch(heroesFetching());
+          const data = await request("http://localhost:3001/heroes");
+            dispatch(heroesFetched(data));
+        } catch (error) {
+            dispatch(heroesFetchingError());
+        }
+      
+        setName('');
+        setDescr('');
+        setElement('');
+      };
+      
+
+    const filteredElements = elements.slice(1);
+
     return (
-        <form className="border p-4 shadow-lg rounded">
+        <form className="border p-4 shadow-lg rounded" onSubmit={(e) => postHero(e)}>
+            <button onClick={() => console.log()}>button</button>
             <div className="mb-3">
                 <label htmlFor="name" className="form-label fs-4">Имя нового героя</label>
                 <input 
@@ -21,7 +70,10 @@ const HeroesAddForm = () => {
                     name="name" 
                     className="form-control" 
                     id="name" 
-                    placeholder="Как меня зовут?"/>
+                    placeholder="Как меня зовут?"
+                    value={name}
+                    onInput={(e) => setName(e.target.value)}
+                    />
             </div>
 
             <div className="mb-3">
@@ -32,7 +84,10 @@ const HeroesAddForm = () => {
                     className="form-control" 
                     id="text" 
                     placeholder="Что я умею?"
-                    style={{"height": '130px'}}/>
+                    style={{"height": '130px'}}
+                    value={descr}
+                    onInput={(e) => setDescr(e.target.value)}
+                    />
             </div>
 
             <div className="mb-3">
@@ -41,12 +96,16 @@ const HeroesAddForm = () => {
                     required
                     className="form-select" 
                     id="element" 
-                    name="element">
+                    name="element"
+                    value={element}
+                    onChange={(e) => setElement(e.target.value)}
+                    >
                     <option >Я владею элементом...</option>
-                    <option value="fire">Огонь</option>
-                    <option value="water">Вода</option>
-                    <option value="wind">Ветер</option>
-                    <option value="earth">Земля</option>
+                    {
+                        filteredElements.map(({label, element, id}) => {
+                            return <option key={id} value={element}>{label}</option>
+                        })
+                    }
                 </select>
             </div>
 
