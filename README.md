@@ -1,8 +1,10 @@
 This is test task - hero admin panel!
 
-# Technologies stack: 
-React
-Redux
+## Technologies stack: 
+
+#### ✅ React
+
+#### ✅ Redux
 
 ### `yarn/npm start`
 
