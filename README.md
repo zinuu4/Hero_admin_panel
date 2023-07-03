@@ -1,6 +1,8 @@
-This is test task - hero admin panel!
+## This is test task - hero admin panel!
 
-## Technologies stack: 
+![demo](demo/demo_admin-panel.gif)
+
+### Technologies stack: 
 
 #### ✅ React
 
