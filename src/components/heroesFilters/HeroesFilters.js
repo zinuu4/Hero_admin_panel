@@ -32,10 +32,6 @@ const HeroesFilters = () => {
     }, [heroes, selectedFilter]);
 
     const filterPost = (items, filter) => {
-        if (!filter) {
-            return items; // Вернуть весь массив items, если фильтр не выбран
-        }
-
         switch (filter) {
             case 'fire':
                 return items.filter(item => item.element === 'fire')

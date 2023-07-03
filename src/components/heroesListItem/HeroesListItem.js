@@ -1,3 +1,5 @@
+import { motion } from "framer-motion";
+import motionParams from "../../services/motionParams";
 
 const HeroesListItem = ({name, description, element, id, setId}) => {
 
@@ -21,7 +23,7 @@ const HeroesListItem = ({name, description, element, id, setId}) => {
     }
 
     return (
-        <li 
+        <motion.li {...motionParams}
             className={`card flex-row mb-4 shadow-lg text-white ${elementClassName}`}>
             <img src="http://www.stpaulsteinbach.org/wp-content/uploads/2014/09/unknown-hero.jpg" 
                  className="img-fluid w-25 d-inline" 
@@ -39,7 +41,7 @@ const HeroesListItem = ({name, description, element, id, setId}) => {
                     aria-label="Close"
                     onClick={() => setId(id)}></button>
             </span>
-        </li>
+        </motion.li>
     )
 }
 

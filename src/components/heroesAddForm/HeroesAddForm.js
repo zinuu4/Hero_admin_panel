@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
-import { heroesFetching, heroesFetched, heroesFetchingError } from '../../actions';
+import { heroesFetched, heroesFetchingError } from '../../actions';
 
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
@@ -16,6 +16,7 @@ import { heroesFetching, heroesFetched, heroesFetchingError } from '../../action
 // данных из фильтров
 
 const HeroesAddForm = () => {
+    const {heroes} = useSelector(state => state);
     const dispatch = useDispatch();
 
     const {request, post} = useHttp();
@@ -34,19 +35,17 @@ const HeroesAddForm = () => {
 
     const postHero = async () => {
         const heroInf = {
-          "id": parseInt(uuidv4()),
+          "id": uuidv4(),
           "name": name,
           "description": descr,
           "element": element
         };
       
         try {
-          await post("http://localhost:3001/heroes", heroInf);
-            dispatch(heroesFetching());
-          const data = await request("http://localhost:3001/heroes");
-            dispatch(heroesFetched(data));
+            await post("http://localhost:3001/heroes", heroInf);
+                dispatch(heroesFetched([...heroes, heroInf]));
         } catch (error) {
-            dispatch(heroesFetchingError());
+                dispatch(heroesFetchingError());
         }
       
         setName('');

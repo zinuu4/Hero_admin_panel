@@ -17,14 +17,14 @@ const HeroesList = () => {
 
     const {request, onDelete} = useHttp();
 
-    const [id, setId] = useState();
+    const [id, setId] = useState('');
 
     useEffect(() => {
         const deleteHero = async () => {
-            if (id > 0) {
+            if (id.length > 2) {
                 try {
                     await onDelete(`http://localhost:3001/heroes/${id}`);
-                        dispatch(heroesFetching());
+                        // dispatch(heroesFetching());
                     const data = await request("http://localhost:3001/heroes");
                         dispatch(heroesFetched(data));
                 } catch (error) {
