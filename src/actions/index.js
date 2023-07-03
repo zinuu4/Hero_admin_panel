@@ -16,3 +16,10 @@ export const heroesFetchingError = () => {
         type: 'HEROES_FETCHING_ERROR'
     }
 }
+
+export const visibleData = (heroes) => {
+    return {
+        type: 'VISIBLE_DATA',
+        filteredHeroes: heroes
+    }
+}

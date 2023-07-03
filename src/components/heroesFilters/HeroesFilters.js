@@ -1,3 +1,8 @@
+import {useHttp} from '../../hooks/http.hook';
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { visibleData } from '../../actions';
 
 // Задача для этого компонента:
 // Фильтры должны формироваться на основании загруженных данных
@@ -7,16 +12,79 @@
 // Представьте, что вы попросили бэкенд-разработчика об этом
 
 const HeroesFilters = () => {
+    const {heroes} = useSelector(state => state);
+    const dispatch = useDispatch();
+
+    const {request} = useHttp();
+
+    const [filters, setFilters] = useState([]);
+    const [selectedFilter, setSelectedFilter] = useState('');
+
+    useEffect(() => {
+        request("http://localhost:3001/filters")
+            .then(data => setFilters(data))
+            .catch((e) => console.log(e));
+    }, []);
+
+    useEffect(() => {
+        const data = filterPost(heroes, selectedFilter);
+        dispatch(visibleData(data));
+    }, [heroes, selectedFilter]);
+
+    const filterPost = (items, filter) => {
+        if (!filter) {
+            return items; // Вернуть весь массив items, если фильтр не выбран
+        }
+
+        switch (filter) {
+            case 'fire':
+                return items.filter(item => item.element === 'fire')
+            case 'water':
+                return items.filter(item => item.element === 'water')
+            case 'wind':
+                return items.filter(item => item.element === 'wind')
+            case 'earth':
+                return items.filter(item => item.element === 'earth')
+            default:
+                return items
+        }
+    }
+
     return (
         <div className="card shadow-lg mt-4">
             <div className="card-body">
                 <p className="card-text">Отфильтруйте героев по элементам</p>
                 <div className="btn-group">
-                    <button className="btn btn-outline-dark active">Все</button>
-                    <button className="btn btn-danger">Огонь</button>
-                    <button className="btn btn-primary">Вода</button>
-                    <button className="btn btn-success">Ветер</button>
-                    <button className="btn btn-secondary">Земля</button>
+                    {
+                        filters.map(({element, label, id}) => {
+                            let elementClassName;
+                            switch (element) {
+                                case 'all':
+                                    elementClassName = 'btn btn-outline-dark';
+                                    break;
+                                case 'fire':
+                                    elementClassName = 'btn btn-danger';
+                                    break;
+                                case 'water':
+                                    elementClassName = 'btn btn-primary';
+                                    break;
+                                case 'wind':
+                                    elementClassName = 'btn btn-success';
+                                    break;
+                                case 'earth':
+                                    elementClassName = 'btn btn-secondary';
+                                    break;
+                            }
+                            return <button 
+                                key={id} 
+                                onClick={() => {
+                                    setSelectedFilter(element);
+                                }} 
+                                className={elementClassName}
+                                >{label}
+                            </button>
+                        })
+                    }
                 </div>
             </div>
         </div>

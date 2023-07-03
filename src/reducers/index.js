@@ -1,7 +1,7 @@
 const initialState = {
     heroes: [],
     heroesLoadingStatus: 'idle',
-    filters: []
+    filteredHeroes: []
 }
 
 const reducer = (state = initialState, action) => {
@@ -21,6 +21,11 @@ const reducer = (state = initialState, action) => {
             return {
                 ...state,
                 heroesLoadingStatus: 'error'
+            }
+        case 'VISIBLE_DATA':
+            return {
+                ...state,
+                filteredHeroes: action.filteredHeroes
             }
         default: return state
     }

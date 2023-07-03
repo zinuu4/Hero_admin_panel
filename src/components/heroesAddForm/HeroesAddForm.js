@@ -16,7 +16,6 @@ import { heroesFetching, heroesFetched, heroesFetchingError } from '../../action
 // данных из фильтров
 
 const HeroesAddForm = () => {
-    const {heroes} = useSelector(state => state);
     const dispatch = useDispatch();
 
     const {request, post} = useHttp();
@@ -25,6 +24,7 @@ const HeroesAddForm = () => {
     const [name, setName] = useState('');
     const [descr, setDescr] = useState('');
     const [element, setElement] = useState('');
+    const [error, setError] = useState("");
 
     useEffect(() => {
         request("http://localhost:3001/filters")
@@ -32,11 +32,9 @@ const HeroesAddForm = () => {
             .catch((e) => console.log(e));
     }, []);
 
-    const postHero = async (e) => {
-        e.preventDefault();
-        
+    const postHero = async () => {
         const heroInf = {
-          "id": uuidv4(),
+          "id": parseInt(uuidv4()),
           "name": name,
           "description": descr,
           "element": element
@@ -54,18 +52,28 @@ const HeroesAddForm = () => {
         setName('');
         setDescr('');
         setElement('');
-      };
+    };
+
+    const onSubmit = (e) => {
+        e.preventDefault();
+
+        if (name.trim() === "" || descr.trim() === "" || element.trim() === "") {
+            setError("Пожалуйста заполните все поля и выберите элемент");
+            return;
+        } else {
+            postHero(e);
+            setError('');
+        }
+    }
       
 
     const filteredElements = elements.slice(1);
 
     return (
-        <form className="border p-4 shadow-lg rounded" onSubmit={(e) => postHero(e)}>
-            <button onClick={() => console.log()}>button</button>
+        <form className="border p-4 shadow-lg rounded" onSubmit={(e) => onSubmit(e)}>
             <div className="mb-3">
                 <label htmlFor="name" className="form-label fs-4">Имя нового героя</label>
                 <input 
-                    required
                     type="text" 
                     name="name" 
                     className="form-control" 
@@ -79,7 +87,6 @@ const HeroesAddForm = () => {
             <div className="mb-3">
                 <label htmlFor="text" className="form-label fs-4">Описание</label>
                 <textarea
-                    required
                     name="text" 
                     className="form-control" 
                     id="text" 
@@ -93,7 +100,6 @@ const HeroesAddForm = () => {
             <div className="mb-3">
                 <label htmlFor="element" className="form-label">Выбрать элемент героя</label>
                 <select 
-                    required
                     className="form-select" 
                     id="element" 
                     name="element"
@@ -109,6 +115,7 @@ const HeroesAddForm = () => {
                 </select>
             </div>
 
+            {error && <div style={{'marginBottom': '10px'}} className='text-danger'>{error}</div>}
             <button type="submit" className="btn btn-primary">Создать</button>
         </form>
     )
