@@ -54,6 +54,7 @@ const HeroesFilters = () => {
                     {
                         filters.map(({element, label, id}) => {
                             let elementClassName;
+                            let activeClass = selectedFilter === element ? ' active' : '';
                             switch (element) {
                                 case 'all':
                                     elementClassName = 'btn btn-outline-dark';
@@ -73,10 +74,11 @@ const HeroesFilters = () => {
                             }
                             return <button 
                                 key={id} 
+                                id={id}
                                 onClick={() => {
                                     setSelectedFilter(element);
                                 }} 
-                                className={elementClassName}
+                                className={`${elementClassName} ${activeClass}`}
                                 >{label}
                             </button>
                         })

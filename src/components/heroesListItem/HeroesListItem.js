@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import motionParams from "../../services/motionParams";
 
-const HeroesListItem = ({name, description, element, id, setId}) => {
+const HeroesListItem = ({name, description, element, id, onDelete}) => {
 
     let elementClassName;
 
@@ -39,7 +39,7 @@ const HeroesListItem = ({name, description, element, id, setId}) => {
                     type="button" 
                     className="btn-close btn-close" 
                     aria-label="Close"
-                    onClick={() => setId(id)}></button>
+                    onClick={() => onDelete(id)}></button>
             </span>
         </motion.li>
     )

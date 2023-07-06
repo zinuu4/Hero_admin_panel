@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
-import { heroesFetched, heroesFetchingError } from '../../actions';
+import { heroesFetchingError, addHero } from '../../actions';
 
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
@@ -16,10 +16,9 @@ import { heroesFetched, heroesFetchingError } from '../../actions';
 // данных из фильтров
 
 const HeroesAddForm = () => {
-    const {heroes} = useSelector(state => state);
     const dispatch = useDispatch();
 
-    const {request, post} = useHttp();
+    const {request} = useHttp();
     const [elements, setElements] = useState([]);
 
     const [name, setName] = useState('');
@@ -33,36 +32,33 @@ const HeroesAddForm = () => {
             .catch((e) => console.log(e));
     }, []);
 
-    const postHero = async () => {
-        const heroInf = {
-          "id": uuidv4(),
-          "name": name,
-          "description": descr,
-          "element": element
-        };
-      
-        try {
-            await post("http://localhost:3001/heroes", heroInf);
-                dispatch(heroesFetched([...heroes, heroInf]));
-        } catch (error) {
-                dispatch(heroesFetchingError());
-        }
-      
-        setName('');
-        setDescr('');
-        setElement('');
-    };
-
-    const onSubmit = (e) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
         if (name.trim() === "" || descr.trim() === "" || element.trim() === "") {
             setError("Пожалуйста заполните все поля и выберите элемент");
             return;
         } else {
-            postHero(e);
+            const newHero = {
+            "id": uuidv4(),
+            "name": name,
+            "description": descr,
+            "element": element
+            };
+        
+            try {
+                await request("http://localhost:3001/heroes", 'POST', JSON.stringify(newHero));
+                dispatch(addHero(newHero));
+            } catch (error) {
+                dispatch(heroesFetchingError());
+            }
+        
+            setName('');
+            setDescr('');
+            setElement('');
             setError('');
         }
+        
     }
       
 

@@ -23,3 +23,17 @@ export const visibleData = (heroes) => {
         filteredHeroes: heroes
     }
 }
+
+export const heroDeleted = (id) => {
+    return {
+        type: 'HERO_DELETED',
+        payload: id
+    }
+}
+
+export const addHero = (hero) => {
+    return {
+        type: 'HERO_ADDED',
+        payload: hero
+    }
+}

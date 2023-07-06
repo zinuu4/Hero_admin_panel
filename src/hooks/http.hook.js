@@ -23,44 +23,11 @@ export const useHttp = () => {
         }
     }, []);
 
-    const post = useCallback(async (url, data, method = 'POST', headers = {'Content-Type': 'application/json'}) => {
-
-        try {
-            const response = await fetch(url, {
-                method,
-                headers,
-                body: JSON.stringify(data)
-            });
-
-            if (!response.ok) {
-                throw new Error(`Could not fetch ${url}, status: ${response.status}`);
-            }
-
-        } catch(e) {
-            throw e;
-        }
-    }, []);
-
-    const onDelete = useCallback(async (url, method = 'DELETE') => {
-
-        try {
-            const response = await fetch(url, {method});
-
-            if (!response.ok) {
-                throw new Error(`Could not fetch ${url}, status: ${response.status}`);
-            }
-        } catch(e) {
-            throw e;
-        }
-    }, []);   
-
     // const clearError = useCallback(() => {
         // setProcess('loading');
     // }, []);
 
-    return {request, 
-            onDelete,
-            post
+    return {request
             // clearError, 
             // process, 
             // setProcess

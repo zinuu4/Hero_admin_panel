@@ -1,8 +1,8 @@
 import {useHttp} from '../../hooks/http.hook';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { heroesFetching, heroesFetched, heroesFetchingError } from '../../actions';
+import { heroesFetching, heroesFetched, heroesFetchingError, heroDeleted } from '../../actions';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
@@ -15,26 +15,7 @@ const HeroesList = () => {
     const {heroesLoadingStatus, filteredHeroes} = useSelector(state => state);
     const dispatch = useDispatch();
 
-    const {request, onDelete} = useHttp();
-
-    const [id, setId] = useState('');
-
-    useEffect(() => {
-        const deleteHero = async () => {
-            if (id.length > 2) {
-                try {
-                    await onDelete(`http://localhost:3001/heroes/${id}`);
-                        // dispatch(heroesFetching());
-                    const data = await request("http://localhost:3001/heroes");
-                        dispatch(heroesFetched(data));
-                } catch (error) {
-                        dispatch(heroesFetchingError());
-                }
-            }
-        }
-
-        deleteHero();
-    }, [id])
+    const {request} = useHttp();
 
     useEffect(() => {
         dispatch(heroesFetching());
@@ -44,6 +25,13 @@ const HeroesList = () => {
 
         // eslint-disable-next-line
     }, []);
+
+    const onDelete = useCallback((id) => {
+        request(`http://localhost:3001/heroes/${id}`, 'DELETE')
+            .then(data => console.log(data, 'Deleted'))
+            .then(dispatch(heroDeleted(id)))
+            .catch(err => console.log(err));
+    }, [request])
 
     if (heroesLoadingStatus === "loading") {
         return <Spinner/>;
@@ -57,7 +45,7 @@ const HeroesList = () => {
         }
 
         return arr.map(({id, ...props}) => {
-            return <HeroesListItem setId={setId} id={id} key={id} {...props}/>
+            return <HeroesListItem id={id} key={id} onDelete={onDelete} {...props}/>
         })
     }
 
