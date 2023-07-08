@@ -3,12 +3,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { visibleData } from '../../actions/heroes';
-import { 
-    filtersFetching, 
-    filtersFetched, 
-    filtersFetchingError,
-    chooseActiveFilter
-} from '../../actions/filters';
+import { fetchFilters, chooseActiveFilter } from '../../actions/filters';
 
 import Spinner from '../spinner/Spinner';
 
@@ -27,10 +22,7 @@ const HeroesFilters = () => {
     const {request} = useHttp();
 
     useEffect(() => {
-        dispatch(filtersFetching());
-        request("http://localhost:3001/filters")
-            .then(data => dispatch(filtersFetched(data)))
-            .catch(() => dispatch(filtersFetchingError()));
+        dispatch(fetchFilters(request));
     }, []);
 
     useEffect(() => {
@@ -70,9 +62,7 @@ const HeroesFilters = () => {
             const elementClassName = `btn ${activeClass} ${className}`;
             return <button 
                 key={id} 
-                onClick={() => {
-                    dispatch(chooseActiveFilter(element));
-                }} 
+                onClick={() => {dispatch(chooseActiveFilter(element))}}
                 className={elementClassName}
                 >{label}
             </button>
