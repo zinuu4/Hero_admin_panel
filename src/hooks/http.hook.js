@@ -24,7 +24,7 @@ export const useHttp = () => {
     }, []);
 
     // const clearError = useCallback(() => {
-        // setProcess('loading');
+    //     setProcess('loading');
     // }, []);
 
     return {request

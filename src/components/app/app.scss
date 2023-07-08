@@ -12,5 +12,7 @@
     padding-top: 50px;
     &__interactive {
         padding-left: 40px;
+        display: flex;
+        flex-direction: column;
     }
 }

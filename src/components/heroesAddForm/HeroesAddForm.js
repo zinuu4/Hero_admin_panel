@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { v4 as uuidv4 } from 'uuid';
 
-import { heroesFetchingError, addHero } from '../../actions';
+import { heroesFetchingError, addHero } from '../../actions/heroes';
+import { 
+    filtersFetching, 
+    filtersFetched, 
+    filtersFetchingError 
+} from '../../actions/filters';
 
 // Задача для этого компонента:
 // Реализовать создание нового героя с введенными данными. Он должен попадать
@@ -16,21 +21,17 @@ import { heroesFetchingError, addHero } from '../../actions';
 // данных из фильтров
 
 const HeroesAddForm = () => {
+
+    const {filters} = useSelector(state => state.filters);
+
     const dispatch = useDispatch();
 
     const {request} = useHttp();
-    const [elements, setElements] = useState([]);
 
     const [name, setName] = useState('');
     const [descr, setDescr] = useState('');
     const [element, setElement] = useState('');
     const [error, setError] = useState("");
-
-    useEffect(() => {
-        request("http://localhost:3001/filters")
-            .then(data => setElements(data))
-            .catch((e) => console.log(e));
-    }, []);
 
     const onSubmit = async (e) => {
         e.preventDefault();
@@ -62,7 +63,7 @@ const HeroesAddForm = () => {
     }
       
 
-    const filteredElements = elements.slice(1);
+    const filteredElements = filters.slice(1);
 
     return (
         <form className="border p-4 shadow-lg rounded" onSubmit={(e) => onSubmit(e)}>
