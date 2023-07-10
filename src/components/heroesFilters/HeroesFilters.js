@@ -1,14 +1,13 @@
-import {useHttp} from '../../hooks/http.hook';
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { visibleData } from '../heroesList/heroesSlice';
+import { visibleData, selectAll } from '../heroesList/heroesSlice';
 import { chooseActiveFilter, fetchFilters } from './filtersSlice';
 
 import Spinner from '../spinner/Spinner';
 
 const HeroesFilters = () => {
-    const {heroes} = useSelector(state => state.heroes);
+    const heroes = useSelector(selectAll);
     const {filters, filtersLoadingStatus, activeFilter} = useSelector(state => state.filters);
     const dispatch = useDispatch();
 
@@ -53,7 +52,11 @@ const HeroesFilters = () => {
             const elementClassName = `btn ${activeClass} ${className}`;
             return <button 
                 key={id} 
-                onClick={() => {dispatch(chooseActiveFilter(element))}}
+                onClick={() => {
+                    if (activeFilter !== element) {
+                      dispatch(chooseActiveFilter(element));
+                    }
+                }}                  
                 className={elementClassName}
                 >{label}
             </button>

@@ -4,9 +4,9 @@
 
 ### Technologies stack: 
 
-#### ✅ React
+#### ✅ React (Hooks)
 
-#### ✅ Redux
+#### ✅ Redux (Toolkit)
 
 ### `yarn/npm start`
 
