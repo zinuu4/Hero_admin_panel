@@ -1,54 +1,49 @@
-import {useHttp} from '../../hooks/http.hook';
-import { useCallback, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useMemo } from 'react';
+import { useSelector } from 'react-redux';
 
-import { heroDeleted, fetchHeroes } from './heroesSlice';
+import { useGetHeroesQuery } from '../../api/apiSlice';
 import HeroesListItem from "../heroesListItem/HeroesListItem";
 import Spinner from '../spinner/Spinner';
 
 const HeroesList = () => {
-    const {heroesLoadingStatus, filteredHeroes} = useSelector(state => state.heroes);
-    const dispatch = useDispatch();
+    const {
+        data: heroes,
+        isFetching,
+        isLoading,
+        isError,
+    } = useGetHeroesQuery();
 
-    const {request} = useHttp();
+    const { activeFilter } = useSelector(state => state.filters);
 
-    const [heroes, setHeroes] = useState([]);
+    const filterPost = useMemo(() => {
+        if (activeFilter === 'all') {
+            return heroes;
+        } else {
+            return heroes.filter(item => item.element === activeFilter);
+        }
+    }, [heroes, activeFilter]);
 
-    useEffect(() => {
-        setHeroes(renderHeroesList(filteredHeroes));
-    }, [filteredHeroes])
-
-    useEffect(() => {
-        dispatch(fetchHeroes());
-        // eslint-disable-next-line
-    }, []);
-
-    const onDelete = useCallback((id) => {
-        request(`http://localhost:3001/heroes/${id}`, 'DELETE')
-            .then(data => console.log(data, 'Deleted'))
-            .then(dispatch(heroDeleted(id)))
-            .catch(err => console.log(err));
-    }, [request])
-
-    if (heroesLoadingStatus === "loading") {
+    if (isFetching || isLoading) {
         return <Spinner/>;
-    } else if (heroesLoadingStatus === "error") {
+    } else if (isError) {
         return <h5 className="text-center mt-5">Ошибка загрузки</h5>
     }
 
     function renderHeroesList(arr) {
-        if (arr.length === 0) {
+        if (arr?.length === 0) {
             return <h5 className="text-center mt-5">Героев пока нет</h5>
         }
 
         return arr.map(({id, ...props}) => {
-            return <HeroesListItem id={id} key={id} onDelete={onDelete} {...props}/>
+            return <HeroesListItem id={id} key={id} {...props}/>
         })
     }
 
+    const elements = renderHeroesList(filterPost)
+
     return (
         <ul>
-            {heroes}
+            {elements}
         </ul>
     )
 }

@@ -1,7 +1,15 @@
 import { motion } from "framer-motion";
+
+import { useDeleteHeroMutation } from "../../api/apiSlice";
 import motionParams from "../../services/motionParams";
 
-const HeroesListItem = ({name, description, element, id, onDelete}) => {
+const HeroesListItem = ({name, description, element, id}) => {
+
+    const [deleteHero, {isLoading}] = useDeleteHeroMutation();
+
+    const handleDelete = (id) => {
+        deleteHero(id)
+    }
 
     let elementClassName;
 
@@ -39,7 +47,7 @@ const HeroesListItem = ({name, description, element, id, onDelete}) => {
                     type="button" 
                     className="btn-close btn-close" 
                     aria-label="Close"
-                    onClick={() => onDelete(id)}></button>
+                    onClick={() => handleDelete(id)}></button>
             </span>
         </motion.li>
     )

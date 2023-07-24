@@ -1,44 +1,23 @@
-import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { visibleData, selectAll } from '../heroesList/heroesSlice';
-import { chooseActiveFilter, fetchFilters } from './filtersSlice';
+import { chooseActiveFilter } from './filtersSlice';
+import { useGetFiltersQuery } from '../../api/apiSlice';
 
 import Spinner from '../spinner/Spinner';
 
 const HeroesFilters = () => {
-    const heroes = useSelector(selectAll);
-    const {filters, filtersLoadingStatus, activeFilter} = useSelector(state => state.filters);
+    const {
+        data: filters,
+        isLoading,
+        isFetching,
+        isError
+    } = useGetFiltersQuery();
+    const { activeFilter } = useSelector(state => state.filters);
     const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(fetchFilters());
-    }, []);
-
-    useEffect(() => {
-        const data = filterPost(heroes, activeFilter);
-        dispatch(visibleData(data));
-        console.log('render');
-    }, [heroes, activeFilter]);
-
-    const filterPost = (items, filter) => {
-        switch (filter) {
-            case 'fire':
-                return items.filter(item => item.element === 'fire')
-            case 'water':
-                return items.filter(item => item.element === 'water')
-            case 'wind':
-                return items.filter(item => item.element === 'wind')
-            case 'earth':
-                return items.filter(item => item.element === 'earth')
-            default:
-                return items
-        }
-    }
-
-    if (filtersLoadingStatus === 'loading') {
+    if (isLoading || isFetching) {
         return <Spinner/>
-    } else if (filtersLoadingStatus === 'error') {
+    } else if (isError) {
         return <h5 className="text-center mt-5">Ошибка загрузки</h5>
     }
 

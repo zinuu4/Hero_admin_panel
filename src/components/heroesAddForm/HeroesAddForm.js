@@ -1,23 +1,22 @@
-import {useHttp} from '../../hooks/http.hook';
-import { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-import { heroesFetchingError, addHero } from '../heroesList/heroesSlice';
+import { useCreateHeroMutation } from '../../api/apiSlice';
+import { useGetFiltersQuery } from '../../api/apiSlice';
 
 const HeroesAddForm = () => {
-
-    const {filters} = useSelector(state => state.filters);
-
-    const dispatch = useDispatch();
-
-    const {request} = useHttp();
+    const {
+        data: filters
+    } = useGetFiltersQuery();
 
     const [name, setName] = useState('');
     const [descr, setDescr] = useState('');
     const [element, setElement] = useState('');
-    const [error, setError] = useState("");
+    const [error, setError] = useState('');
 
+    const [createHero, {isLoading}] = useCreateHeroMutation();
+
+    
     const onSubmit = async (e) => {
         e.preventDefault();
 
@@ -31,13 +30,8 @@ const HeroesAddForm = () => {
             "description": descr,
             "element": element
             };
-        
-            try {
-                await request("http://localhost:3001/heroes", 'POST', JSON.stringify(newHero));
-                dispatch(addHero(newHero));
-            } catch (error) {
-                dispatch(heroesFetchingError());
-            }
+
+            createHero(newHero).unwrap();
         
             setName('');
             setDescr('');
@@ -46,9 +40,8 @@ const HeroesAddForm = () => {
         }
         
     }
-      
 
-    const filteredElements = filters.slice(1);
+    const filteredElements = filters?.slice(1) || [];
 
     return (
         <form className="border p-4 shadow-lg rounded" onSubmit={(e) => onSubmit(e)}>
