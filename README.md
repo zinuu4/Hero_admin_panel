@@ -2,7 +2,9 @@
 
 ![demo](demo/demo_admin-panel.gif)
 
-### Technologies stack: 
+### Technologies stack:
+
+#### ✅ Typescript
 
 #### ✅ React (Hooks)
 
